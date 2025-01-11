@@ -28,11 +28,18 @@
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
+      /* Используем эмодзи ракеты */
+      font-size: 48px; /* Размер эмодзи */
+    }
+    /*
+    Если хотите использовать изображение ракеты вместо эмодзи, раскомментируйте этот стиль:
+    #rocket {
       width: 60px;
       height: 80px;
       background: url('https://cdn-icons-png.flaticon.com/512/3798/3798202.png') no-repeat center;
       background-size: contain;
     }
+    */
     input, button {
       font-size: 16px;
       padding: 10px;
@@ -64,7 +71,7 @@
 
   <!-- Контейнер для ракеты -->
   <div id="rocket-container">
-    <div id="rocket"></div>
+    <div id="rocket">🚀</div>
   </div>
 
   <script>
