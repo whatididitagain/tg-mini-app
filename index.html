@@ -35,7 +35,11 @@
   <h1>Rocket Game</h1>
   <div id="daily-coins">Ежедневные монеты: 0</div>
   <div id="game-status">Ваши монеты: 0</div>
-  <input id="bet-input" type="number" placeholder="Ставка (уровень полёта)" />
+
+  <!-- Поля для ввода ставки и уровня -->
+  <input id="bet-coins-input" type="number" placeholder="Ставка (монеты)" />
+  <input id="bet-level-input" type="number" placeholder="Уровень (1-100)" />
+
   <button onclick="placeBet()">Сделать ставку</button>
   <div id="result"></div>
 
@@ -66,28 +70,35 @@
 
     // Функция для размещения ставки
     function placeBet() {
-      const betInput = document.getElementById("bet-input");
-      const bet = parseInt(betInput.value);
+      const betCoinsInput = document.getElementById("bet-coins-input");
+      const betLevelInput = document.getElementById("bet-level-input");
+      const betCoins = parseInt(betCoinsInput.value);
+      const betLevel = parseInt(betLevelInput.value);
 
-      if (!bet || bet <= 0) {
-        alert("Введите корректную ставку.");
+      if (!betCoins || betCoins <= 0) {
+        alert("Введите корректную сумму ставки.");
         return;
       }
 
-      if (bet > coins) {
+      if (!betLevel || betLevel < 1 || betLevel > 100) {
+        alert("Введите уровень от 1 до 100.");
+        return;
+      }
+
+      if (betCoins > coins) {
         alert("Недостаточно монет для этой ставки.");
         return;
       }
 
       // Списываем монеты за ставку
-      coins -= bet;
+      coins -= betCoins;
 
       // Запускаем ракету
       launchRocket();
 
       // Проверяем результат
-      if (bet <= rocketLevel) {
-        const tokensWon = bet * rocketLevel; // Выигрыш в токенах
+      if (rocketLevel >= betLevel) {
+        const tokensWon = betCoins * betLevel; // Выигрыш в токенах
         alert(`Ракета долетела до уровня ${rocketLevel}. Вы выиграли ${tokensWon} токенов!`);
       } else {
         alert(`Ракета долетела до уровня ${rocketLevel}. Вы проиграли.`);
