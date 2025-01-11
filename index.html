@@ -22,28 +22,55 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      margin: 10px;
     }
     button:hover {
       background-color: #006699;
+    }
+    #boost-status {
+      color: green;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
   <h1>Добро пожаловать в игру!</h1>
   <p id="score">Ваши очки: 0</p>
+  <p id="boost-status">Буст не активен</p>
   <button onclick="increaseScore()">Нажми, чтобы получить очки</button>
+  <button onclick="activateBoost()">Активировать буст (x2 на 30 сек)</button>
 
   <script>
     // Telegram Web Apps API
     const tg = window.Telegram?.WebApp;
 
-    // Начальный счёт
+    // Начальный счёт и статус буста
     let score = 0;
+    let boostActive = false;
 
     // Функция для увеличения очков
     function increaseScore() {
-      score++;
+      const multiplier = boostActive ? 2 : 1; // Если буст активен, умножаем на 2
+      score += 1 * multiplier;
       document.getElementById('score').textContent = `Ваши очки: ${score}`;
+    }
+
+    // Функция для активации буста
+    function activateBoost() {
+      if (boostActive) {
+        alert("Буст уже активирован!");
+        return;
+      }
+      boostActive = true;
+      document.getElementById('boost-status').textContent = "Буст активен (x2 на 30 секунд)";
+      alert("Буст активирован! Очки удваиваются на 30 секунд.");
+
+      // Таймер для деактивации буста
+      setTimeout(() => {
+        boostActive = false;
+        document.getElementById('boost-status').textContent = "Буст не активен";
+        alert("Буст закончился.");
+      }, 30000); // Буст длится 30 секунд
     }
 
     // Раскрыть приложение на весь экран
