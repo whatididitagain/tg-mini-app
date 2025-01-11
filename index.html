@@ -10,8 +10,8 @@
       text-align: center;
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #1e3c72, #2a5298); /* Градиент для всего фона */
-      color: white;
+      background: linear-gradient(to bottom, #87ceeb, #f0f8ff); /* Голубое небо */
+      transition: background 1s ease-in-out;
     }
 
     h1 {
@@ -24,8 +24,6 @@
       width: 300px;
       height: 500px; /* Высота контейнера под ракету */
       margin: 20px auto;
-      background: linear-gradient(to bottom, #3e92cc, #92c6ff); /* Мягкий градиент для неба */
-      border: 2px solid #ffffff50; /* Полупрозрачная граница */
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       overflow: hidden;
@@ -65,25 +63,41 @@
 
     #explosion {
       position: absolute;
-      bottom: 50px;
+      bottom: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      font-size: 100px; /* Размер взрыва */
-      z-index: 3;
+      transform: translate(-50%, -50%);
+      width: 150px;
+      height: 150px;
+      background: url('https://cdn-icons-png.flaticon.com/512/1543/1543674.png') no-repeat center;
+      background-size: contain;
       display: none;
+      animation: explode 1s ease-out forwards;
+    }
+
+    @keyframes explode {
+      0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+      }
     }
 
     input, button {
       font-size: 1rem;
       padding: 10px;
       margin: 5px;
-      border: none;
+      border: 2px solid #ccc;
       border-radius: 5px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    input {
-      width: 200px;
+    input:focus {
+      border-color: #0078ff;
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 120, 255, 0.5);
     }
 
     button {
@@ -98,14 +112,19 @@
 
     #bottom-info {
       margin-top: 20px;
-      font-size: 1rem;
+      background: #2a5298;
+      color: white;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
     }
 
     .info {
+      font-size: 1.2rem;
       display: flex;
-      justify-content: center;
       align-items: center;
-      margin: 10px;
     }
 
     .info span {
@@ -127,16 +146,16 @@
   <div id="rocket-container">
     <div id="rocket">🚀</div>
     <div id="flame"></div>
-    <div id="explosion">💥</div> <!-- Взрыв в стиле стикера iOS -->
+    <div id="explosion"></div>
   </div>
 
   <!-- Блок с информацией о монетах и токенах -->
   <div id="bottom-info">
     <div class="info">
-      💵 <span id="game-status">Мои монеты: 0</span>
+      💵 <span id="game-status">0</span>
     </div>
     <div class="info">
-      💲 <span id="token-status">Мои токены: 0</span>
+      💲 <span id="token-status">0</span>
     </div>
   </div>
 
@@ -145,41 +164,54 @@
     let tokens = 0; // Текущие токены игрока
     let rocketLevel = 0; // Случайный уровень полёта ракеты
 
-    // Функция для получения ежедневных монет
-    function getDailyCoins() {
-      coins += 10; // Начисляем 10 монет
-      alert("Вы получили 10 монет за вход!");
-      updateUI();
+    // Смена фона в зависимости от высоты
+    function updateBackground(level) {
+      if (level <= 30) {
+        document.body.style.background = "linear-gradient(to bottom, #87ceeb, #f0f8ff)"; // Небо
+      } else if (level <= 60) {
+        document.body.style.background = "linear-gradient(to bottom, #1e3c72, #2a5298)"; // Космос
+      } else if (level <= 80) {
+        document.body.style.background = "linear-gradient(to bottom, #000000, #1e3c72)"; // Звёзды
+      } else {
+        document.body.style.background = "linear-gradient(to bottom, #000000, #ffffff)"; // Луна
+      }
     }
 
-    // Функция для обновления интерфейса
-    function updateUI() {
-      document.getElementById("game-status").textContent = `Мои монеты: ${coins}`;
-      document.getElementById("token-status").textContent = `Мои токены: ${tokens}`;
+    // Функция для генерации числа с более частым выпадением маленьких значений
+    function generateRocketLevel() {
+      const weights = [];
+      for (let i = 1; i <= 100; i++) {
+        weights.push(1 / Math.pow(i, 2)); // Чем больше число, тем меньше вероятность
+      }
+      const totalWeight = weights.reduce((a, b) => a + b, 0);
+      const random = Math.random() * totalWeight;
+      let cumulativeWeight = 0;
+      for (let i = 1; i <= 100; i++) {
+        cumulativeWeight += weights[i - 1];
+        if (random <= cumulativeWeight) return i;
+      }
+      return 100; // На случай ошибки
     }
 
-    // Функция для запуска ракеты с анимацией
+    // Анимация ракеты и смена фона
     function animateRocket(level, callback) {
       const rocket = document.getElementById("rocket");
       const flame = document.getElementById("flame");
-      const explosion = document.getElementById("explosion");
       const containerHeight = document.getElementById("rocket-container").offsetHeight;
-      const maxLevel = 100;
-
-      const targetPosition = (level / maxLevel) * containerHeight;
+      const targetPosition = (level / 100) * containerHeight;
 
       let currentPosition = 0;
       flame.style.display = "block"; // Показываем пламя
       const interval = setInterval(() => {
+        currentPosition += 5;
+        rocket.style.bottom = `${currentPosition}px`;
+        flame.style.bottom = `${currentPosition - 20}px`;
+        updateBackground(level); // Обновляем фон
         if (currentPosition >= targetPosition) {
           clearInterval(interval);
           flame.style.display = "none"; // Скрываем пламя
           callback();
-          return;
         }
-        currentPosition += 5; // Скорость полёта ракеты
-        rocket.style.bottom = `${currentPosition}px`;
-        flame.style.bottom = `${currentPosition - 20}px`;
       }, 50);
     }
 
@@ -189,47 +221,13 @@
       const betLevelInput = document.getElementById("bet-level-input");
       const betCoins = parseInt(betCoinsInput.value);
       const betLevel = parseInt(betLevelInput.value);
-      const explosion = document.getElementById("explosion");
 
-      if (!betCoins || betCoins <= 0) {
-        alert("Введите корректную сумму ставки.");
-        return;
-      }
-
-      if (!betLevel || betLevel < 1 || betLevel > 100) {
-        alert("Введите уровень от 1 до 100.");
-        return;
-      }
-
-      if (betCoins > coins) {
-        alert("Недостаточно монет для этой ставки.");
-        return;
-      }
-
-      // Списываем монеты за ставку
-      coins -= betCoins;
-
-      // Генерируем уровень полёта ракеты
-      rocketLevel = Math.floor(Math.random() * 100) + 1;
-
-      // Запускаем анимацию ракеты
+      if (betCoins > coins) return alert("Недостаточно монет!");
+      rocketLevel = generateRocketLevel();
       animateRocket(rocketLevel, () => {
-        if (rocketLevel >= betLevel) {
-          const tokensWon = betCoins * betLevel; // Выигрыш в токенах
-          tokens += tokensWon;
-          alert(`Ракета долетела до уровня ${rocketLevel}. Вы выиграли ${tokensWon} токенов!`);
-        } else {
-          explosion.style.display = 'block'; // Показываем взрыв
-          setTimeout(() => explosion.style.display = 'none', 1000); // Скрываем взрыв через 1 секунду
-          alert(`Ракета долетела до уровня ${rocketLevel}. Вы проиграли.`);
-        }
-
-        updateUI();
+        alert(`Ракета долетела до уровня ${rocketLevel}`);
       });
     }
-
-    // Выдаём ежедневные монеты при запуске
-    getDailyCoins();
   </script>
 </body>
 </html>
