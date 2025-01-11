@@ -3,80 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Telegram Mini-App</title>
+  <title>Rocket Game</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       margin-top: 50px;
     }
-    #score {
-      font-size: 24px;
-      margin: 20px 0;
+    #game-status, #result, #daily-coins {
+      margin: 20px;
+      font-size: 18px;
+    }
+    input, button {
+      font-size: 16px;
+      padding: 10px;
+      margin: 10px;
     }
     button {
-      font-size: 18px;
-      padding: 10px 20px;
       background-color: #0088cc;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      margin: 10px;
     }
     button:hover {
       background-color: #006699;
     }
-    #boost-status {
-      color: green;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
-  <h1>Добро пожаловать в игру!</h1>
-  <p id="score">Ваши очки: 0</p>
-  <p id="boost-status">Буст не активен</p>
-  <button onclick="increaseScore()">Нажми, чтобы получить очки</button>
-  <button onclick="activateBoost()">Активировать буст (x2 на 30 сек)</button>
+  <h1>Rocket Game</h1>
+  <div id="daily-coins">Ежедневные монеты: 0</div>
+  <div id="game-status">Ваши монеты: 0</div>
+  <input id="bet-input" type="number" placeholder="Ставка (уровень полёта)" />
+  <button onclick="placeBet()">Сделать ставку</button>
+  <div id="result"></div>
 
   <script>
-    // Telegram Web Apps API
-    const tg = window.Telegram?.WebApp;
+    let coins = 0; // Текущие монеты игрока
+    let dailyCoins = 0; // Ежедневные монеты
+    let rocketLevel = 0; // Случайный уровень полёта ракеты
+    let streak = 0; // Количество дней подряд
 
-    // Начальный счёт и статус буста
-    let score = 0;
-    let boostActive = false;
-
-    // Функция для увеличения очков
-    function increaseScore() {
-      const multiplier = boostActive ? 2 : 1; // Если буст активен, умножаем на 2
-      score += 1 * multiplier;
-      document.getElementById('score').textContent = `Ваши очки: ${score}`;
+    // Функция для получения ежедневных монет
+    function getDailyCoins() {
+      streak++;
+      dailyCoins = streak;
+      coins += dailyCoins;
+      updateUI();
     }
 
-    // Функция для активации буста
-    function activateBoost() {
-      if (boostActive) {
-        alert("Буст уже активирован!");
+    // Функция для обновления интерфейса
+    function updateUI() {
+      document.getElementById("daily-coins").textContent = `Ежедневные монеты: ${dailyCoins}`;
+      document.getElementById("game-status").textContent = `Ваши монеты: ${coins}`;
+    }
+
+    // Функция для полёта ракеты
+    function launchRocket() {
+      rocketLevel = Math.floor(Math.random() * 100) + 1; // Ракета летит до случайного уровня (1-100)
+    }
+
+    // Функция для размещения ставки
+    function placeBet() {
+      const betInput = document.getElementById("bet-input");
+      const bet = parseInt(betInput.value);
+
+      if (!bet || bet <= 0) {
+        alert("Введите корректную ставку.");
         return;
       }
-      boostActive = true;
-      document.getElementById('boost-status').textContent = "Буст активен (x2 на 30 секунд)";
-      alert("Буст активирован! Очки удваиваются на 30 секунд.");
 
-      // Таймер для деактивации буста
-      setTimeout(() => {
-        boostActive = false;
-        document.getElementById('boost-status').textContent = "Буст не активен";
-        alert("Буст закончился.");
-      }, 30000); // Буст длится 30 секунд
+      if (bet > coins) {
+        alert("Недостаточно монет для этой ставки.");
+        return;
+      }
+
+      // Списываем монеты за ставку
+      coins -= bet;
+
+      // Запускаем ракету
+      launchRocket();
+
+      // Проверяем результат
+      if (bet <= rocketLevel) {
+        const tokensWon = bet * rocketLevel; // Выигрыш в токенах
+        alert(`Ракета долетела до уровня ${rocketLevel}. Вы выиграли ${tokensWon} токенов!`);
+      } else {
+        alert(`Ракета долетела до уровня ${rocketLevel}. Вы проиграли.`);
+      }
+
+      updateUI();
     }
 
-    // Раскрыть приложение на весь экран
-    if (tg) {
-      tg.expand();
-    }
+    // Выдаём ежедневные монеты при запуске
+    getDailyCoins();
   </script>
 </body>
 </html>
