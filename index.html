@@ -5,33 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rocket Game</title>
   <style>
-    /* Основные стили */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       text-align: center;
       margin: 0;
       padding: 0;
-      background: #f0f8ff; /* Светло-голубой фон */
+      background: linear-gradient(to bottom, #1e3c72, #2a5298); /* Градиент для всего фона */
+      color: white;
     }
 
     h1 {
-      font-size: 4vw;
-      margin: 10px 0;
+      font-size: 2rem;
+      margin-top: 10px;
     }
 
-    #game-status, #daily-coins, #result {
-      font-size: 3vw;
+    #daily-coins, #game-status, #result {
+      font-size: 1.2rem;
       margin: 10px;
     }
 
     #rocket-container {
       position: relative;
-      width: 80vw;
-      height: 60vh; /* Высота контейнера: 60% высоты экрана */
+      width: 300px;
+      height: 500px; /* Высота контейнера под ракету */
       margin: 20px auto;
-      border: 2px solid #ccc;
-      background: linear-gradient(to bottom, #87ceeb, #f0f8ff); /* Небо */
-      border-radius: 10px;
+      background: linear-gradient(to bottom, #3e92cc, #92c6ff); /* Мягкий градиент для неба */
+      border: 2px solid #ffffff50; /* Полупрозрачная граница */
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       overflow: hidden;
     }
 
@@ -40,18 +41,18 @@
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 8vw; /* Эмодзи ракеты адаптируется к ширине экрана */
+      font-size: 48px; /* Размер ракеты */
       z-index: 2;
     }
 
     #flame {
       position: absolute;
-      bottom: -5vh;
+      bottom: -20px;
       left: 50%;
       transform: translateX(-50%);
-      width: 5vw;
-      height: 10vh;
-      background: linear-gradient(to top, red, orange, yellow);
+      width: 30px;
+      height: 60px;
+      background: linear-gradient(to top, #ff4500, #ffa500, yellow);
       border-radius: 50%;
       animation: flame-flicker 0.2s infinite;
       z-index: 1;
@@ -68,11 +69,11 @@
 
     #explosion {
       position: absolute;
-      bottom: 10%;
+      bottom: 50px;
       left: 50%;
       transform: translateX(-50%);
-      width: 15vw;
-      height: 15vw;
+      width: 120px;
+      height: 120px;
       background: url('https://cdn-icons-png.flaticon.com/512/1543/1543674.png') no-repeat center;
       background-size: contain;
       display: none;
@@ -80,40 +81,26 @@
     }
 
     input, button {
-      font-size: 3vw;
-      padding: 1vw;
+      font-size: 1rem;
+      padding: 10px;
       margin: 5px;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    input {
+      width: 200px;
     }
 
     button {
-      background-color: #0088cc;
+      background-color: #ff6f61;
       color: white;
-      border: none;
-      border-radius: 5px;
       cursor: pointer;
     }
 
     button:hover {
-      background-color: #006699;
-    }
-
-    /* Медиа-запросы для iPhone 16 Pro Max */
-    @media (max-width: 1290px) and (max-height: 2796px) {
-      #rocket-container {
-        height: 65vh; /* Чуть больше высоты для больших экранов */
-      }
-
-      h1 {
-        font-size: 5vw;
-      }
-
-      #game-status, #daily-coins, #result {
-        font-size: 4vw;
-      }
-
-      button {
-        font-size: 3.5vw;
-      }
+      background-color: #e65c50;
     }
   </style>
 </head>
@@ -176,7 +163,7 @@
         }
         currentPosition += 5; // Скорость полёта ракеты
         rocket.style.bottom = `${currentPosition}px`;
-        flame.style.bottom = `${currentPosition - 5}px`;
+        flame.style.bottom = `${currentPosition - 20}px`;
       }, 50);
     }
 
