@@ -19,11 +19,6 @@
       margin-top: 10px;
     }
 
-    #daily-coins, #game-status, #result {
-      font-size: 1.2rem;
-      margin: 10px;
-    }
-
     #rocket-container {
       position: relative;
       width: 300px;
@@ -102,12 +97,15 @@
     button:hover {
       background-color: #e65c50;
     }
+
+    #bottom-info {
+      margin-top: 20px;
+      font-size: 1rem;
+    }
   </style>
 </head>
 <body>
   <h1>Rocket Game</h1>
-  <div id="daily-coins">Ежедневные монеты: 0</div>
-  <div id="game-status">Ваши монеты: 0</div>
 
   <!-- Поля для ввода ставки и уровня -->
   <input id="bet-coins-input" type="number" placeholder="Ставка (монеты)" />
@@ -123,24 +121,28 @@
     <div id="explosion"></div>
   </div>
 
+  <!-- Блок с информацией о монетах и токенах -->
+  <div id="bottom-info">
+    <p id="game-status">Мои монеты: 0</p>
+    <p id="token-status">Мои токены: 0</p>
+  </div>
+
   <script>
     let coins = 0; // Текущие монеты игрока
-    let dailyCoins = 0; // Ежедневные монеты
+    let tokens = 0; // Текущие токены игрока
     let rocketLevel = 0; // Случайный уровень полёта ракеты
-    let streak = 0; // Количество дней подряд
 
     // Функция для получения ежедневных монет
     function getDailyCoins() {
-      streak++;
-      dailyCoins = streak;
-      coins += dailyCoins;
+      coins += 10; // Начисляем 10 монет
+      alert("Вы получили 10 монет за вход!");
       updateUI();
     }
 
     // Функция для обновления интерфейса
     function updateUI() {
-      document.getElementById("daily-coins").textContent = `Ежедневные монеты: ${dailyCoins}`;
-      document.getElementById("game-status").textContent = `Ваши монеты: ${coins}`;
+      document.getElementById("game-status").textContent = `Мои монеты: ${coins}`;
+      document.getElementById("token-status").textContent = `Мои токены: ${tokens}`;
     }
 
     // Функция для запуска ракеты с анимацией
@@ -200,6 +202,7 @@
       animateRocket(rocketLevel, () => {
         if (rocketLevel >= betLevel) {
           const tokensWon = betCoins * betLevel; // Выигрыш в токенах
+          tokens += tokensWon;
           alert(`Ракета долетела до уровня ${rocketLevel}. Вы выиграли ${tokensWon} токенов!`);
         } else {
           explosion.style.display = 'block'; // Показываем взрыв
