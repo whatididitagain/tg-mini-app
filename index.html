@@ -38,6 +38,21 @@
       transform: translateX(-50%);
       font-size: 48px; /* Размер ракеты */
       z-index: 2;
+      animation: rocket-fly 5s ease-in-out forwards;
+    }
+
+    @keyframes rocket-fly {
+      0% {
+        bottom: 0;
+        transform: translateX(-50%) scale(1);
+      }
+      50% {
+        transform: translateX(-50%) scale(1.2);
+      }
+      100% {
+        bottom: 100%;
+        transform: translateX(-50%) scale(1);
+      }
     }
 
     #flame {
@@ -67,12 +82,24 @@
       bottom: 50px;
       left: 50%;
       transform: translateX(-50%);
-      width: 120px;
-      height: 120px;
+      width: 150px;
+      height: 150px;
       background: url('https://cdn-icons-png.flaticon.com/512/1543/1543674.png') no-repeat center;
       background-size: contain;
       display: none;
       z-index: 3;
+      animation: explode 1s ease-out forwards;
+    }
+
+    @keyframes explode {
+      0% {
+        transform: translateX(-50%) scale(0.5);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-50%) scale(1.5);
+        opacity: 0;
+      }
     }
 
     input, button {
@@ -102,6 +129,17 @@
       margin-top: 20px;
       font-size: 1rem;
     }
+
+    .info {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px;
+    }
+
+    .info span {
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
@@ -123,8 +161,12 @@
 
   <!-- Блок с информацией о монетах и токенах -->
   <div id="bottom-info">
-    <p id="game-status">Мои монеты: 0</p>
-    <p id="token-status">Мои токены: 0</p>
+    <div class="info">
+      💵 <span id="game-status">Мои монеты: 0</span>
+    </div>
+    <div class="info">
+      💲 <span id="token-status">Мои токены: 0</span>
+    </div>
   </div>
 
   <script>
