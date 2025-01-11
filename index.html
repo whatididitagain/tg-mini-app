@@ -38,21 +38,6 @@
       transform: translateX(-50%);
       font-size: 48px; /* Размер ракеты */
       z-index: 2;
-      animation: rocket-fly 5s ease-in-out forwards;
-    }
-
-    @keyframes rocket-fly {
-      0% {
-        bottom: 0;
-        transform: translateX(-50%) scale(1);
-      }
-      50% {
-        transform: translateX(-50%) scale(1.2);
-      }
-      100% {
-        bottom: 100%;
-        transform: translateX(-50%) scale(1);
-      }
     }
 
     #flame {
@@ -66,6 +51,7 @@
       border-radius: 50%;
       animation: flame-flicker 0.2s infinite;
       z-index: 1;
+      display: none; /* Пламя не отображается при загрузке */
     }
 
     @keyframes flame-flicker {
@@ -82,24 +68,9 @@
       bottom: 50px;
       left: 50%;
       transform: translateX(-50%);
-      width: 150px;
-      height: 150px;
-      background: url('https://cdn-icons-png.flaticon.com/512/1543/1543674.png') no-repeat center;
-      background-size: contain;
-      display: none;
+      font-size: 100px; /* Размер взрыва */
       z-index: 3;
-      animation: explode 1s ease-out forwards;
-    }
-
-    @keyframes explode {
-      0% {
-        transform: translateX(-50%) scale(0.5);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(-50%) scale(1.5);
-        opacity: 0;
-      }
+      display: none;
     }
 
     input, button {
@@ -156,7 +127,7 @@
   <div id="rocket-container">
     <div id="rocket">🚀</div>
     <div id="flame"></div>
-    <div id="explosion"></div>
+    <div id="explosion">💥</div> <!-- Взрыв в стиле стикера iOS -->
   </div>
 
   <!-- Блок с информацией о монетах и токенах -->
@@ -198,10 +169,11 @@
       const targetPosition = (level / maxLevel) * containerHeight;
 
       let currentPosition = 0;
+      flame.style.display = "block"; // Показываем пламя
       const interval = setInterval(() => {
         if (currentPosition >= targetPosition) {
           clearInterval(interval);
-          flame.style.display = 'none'; // Скрываем пламя
+          flame.style.display = "none"; // Скрываем пламя
           callback();
           return;
         }
@@ -248,7 +220,7 @@
           alert(`Ракета долетела до уровня ${rocketLevel}. Вы выиграли ${tokensWon} токенов!`);
         } else {
           explosion.style.display = 'block'; // Показываем взрыв
-          setTimeout(() => explosion.style.display = 'none', 2000); // Скрываем взрыв через 2 секунды
+          setTimeout(() => explosion.style.display = 'none', 1000); // Скрываем взрыв через 1 секунду
           alert(`Ракета долетела до уровня ${rocketLevel}. Вы проиграли.`);
         }
 
