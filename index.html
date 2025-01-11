@@ -10,6 +10,10 @@
       text-align: center;
       margin-top: 50px;
     }
+    #score {
+      font-size: 24px;
+      margin: 20px 0;
+    }
     button {
       font-size: 18px;
       padding: 10px 20px;
@@ -25,29 +29,26 @@
   </style>
 </head>
 <body>
-  <h1>Добро пожаловать в мини-игру!</h1>
-  <p>Ваше имя: <span id="user-name">...</span></p>
-  <p>Ваш ID: <span id="user-id">...</span></p>
-  <button onclick="playGame()">Начать игру</button>
+  <h1>Добро пожаловать в игру!</h1>
+  <p id="score">Ваши очки: 0</p>
+  <button onclick="increaseScore()">Нажми, чтобы получить очки</button>
 
   <script>
-    // Проверяем, доступен ли Telegram Web Apps API
+    // Telegram Web Apps API
     const tg = window.Telegram?.WebApp;
 
-    if (tg) {
-      // Если приложение работает в Telegram
-      tg.expand();
-      document.getElementById("user-name").textContent = tg.initDataUnsafe.user?.first_name || "Гость";
-      document.getElementById("user-id").textContent = tg.initDataUnsafe.user?.id || "Неизвестно";
-    } else {
-      // Если приложение запущено вне Telegram
-      document.getElementById("user-name").textContent = "Гость";
-      document.getElementById("user-id").textContent = "Тестовый режим";
+    // Начальный счёт
+    let score = 0;
+
+    // Функция для увеличения очков
+    function increaseScore() {
+      score++;
+      document.getElementById('score').textContent = `Ваши очки: ${score}`;
     }
 
-    // Функция для начала игры
-    function playGame() {
-      alert("Игра началась!");
+    // Раскрыть приложение на весь экран
+    if (tg) {
+      tg.expand();
     }
   </script>
 </body>
