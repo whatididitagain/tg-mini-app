@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram Mini-App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      background-color: #0088cc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #006699;
+    }
+  </style>
+</head>
+<body>
+  <h1>Добро пожаловать в мини-игру!</h1>
+  <p>Ваше имя: <span id="user-name">...</span></p>
+  <p>Ваш ID: <span id="user-id">...</span></p>
+  <button onclick="playGame()">Начать игру</button>
+
+  <script>
+    // Проверяем, доступен ли Telegram Web Apps API
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      // Если приложение работает в Telegram
+      tg.expand();
+      document.getElementById("user-name").textContent = tg.initDataUnsafe.user?.first_name || "Гость";
+      document.getElementById("user-id").textContent = tg.initDataUnsafe.user?.id || "Неизвестно";
+    } else {
+      // Если приложение запущено вне Telegram
+      document.getElementById("user-name").textContent = "Гость";
+      document.getElementById("user-id").textContent = "Тестовый режим";
+    }
+
+    // Функция для начала игры
+    function playGame() {
+      alert("Игра началась!");
+    }
+  </script>
+</body>
+</html>
