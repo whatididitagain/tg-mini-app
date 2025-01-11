@@ -28,18 +28,41 @@
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      /* Используем эмодзи ракеты */
-      font-size: 48px; /* Размер эмодзи */
+      font-size: 48px; /* Эмодзи ракеты */
+      z-index: 2;
     }
-    /*
-    Если хотите использовать изображение ракеты вместо эмодзи, раскомментируйте этот стиль:
-    #rocket {
-      width: 60px;
-      height: 80px;
-      background: url('https://cdn-icons-png.flaticon.com/512/3798/3798202.png') no-repeat center;
+    #flame {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 40px;
+      background: linear-gradient(to top, red, orange, yellow);
+      border-radius: 50%;
+      animation: flame-flicker 0.2s infinite;
+      z-index: 1;
+    }
+    @keyframes flame-flicker {
+      0%, 100% {
+        transform: translateX(-50%) scaleY(1);
+      }
+      50% {
+        transform: translateX(-50%) scaleY(1.2);
+      }
+    }
+    #explosion {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 100px;
+      background: url('https://cdn-icons-png.flaticon.com/512/1543/1543674.png') no-repeat center;
       background-size: contain;
+      display: none; /* Взрыв появляется только в случае проигрыша */
+      z-index: 3;
     }
-    */
     input, button {
       font-size: 16px;
       padding: 10px;
@@ -72,6 +95,8 @@
   <!-- Контейнер для ракеты -->
   <div id="rocket-container">
     <div id="rocket">🚀</div>
+    <div id="flame"></div>
+    <div id="explosion"></div>
   </div>
 
   <script>
@@ -95,8 +120,10 @@
     }
 
     // Функция для запуска ракеты с анимацией
-    function animateRocket(level) {
+    function animateRocket(level, callback) {
       const rocket = document.getElementById("rocket");
+      const flame = document.getElementById("flame");
+      const explosion = document.getElementById("explosion");
       const containerHeight = document.getElementById("rocket-container").offsetHeight;
       const maxLevel = 100;
 
@@ -106,10 +133,13 @@
       const interval = setInterval(() => {
         if (currentPosition >= targetPosition) {
           clearInterval(interval);
+          flame.style.display = 'none'; // Скрываем пламя
+          callback();
           return;
         }
         currentPosition += 5; // Скорость полёта ракеты
         rocket.style.bottom = `${currentPosition}px`;
+        flame.style.bottom = `${currentPosition - 20}px`;
       }, 50);
     }
 
@@ -119,6 +149,7 @@
       const betLevelInput = document.getElementById("bet-level-input");
       const betCoins = parseInt(betCoinsInput.value);
       const betLevel = parseInt(betLevelInput.value);
+      const explosion = document.getElementById("explosion");
 
       if (!betCoins || betCoins <= 0) {
         alert("Введите корректную сумму ставки.");
@@ -142,19 +173,18 @@
       rocketLevel = Math.floor(Math.random() * 100) + 1;
 
       // Запускаем анимацию ракеты
-      animateRocket(rocketLevel);
-
-      // Проверяем результат
-      setTimeout(() => {
+      animateRocket(rocketLevel, () => {
         if (rocketLevel >= betLevel) {
           const tokensWon = betCoins * betLevel; // Выигрыш в токенах
           alert(`Ракета долетела до уровня ${rocketLevel}. Вы выиграли ${tokensWon} токенов!`);
         } else {
+          explosion.style.display = 'block'; // Показываем взрыв
+          setTimeout(() => explosion.style.display = 'none', 2000); // Скрываем взрыв через 2 секунды
           alert(`Ракета долетела до уровня ${rocketLevel}. Вы проиграли.`);
         }
 
         updateUI();
-      }, 5000); // Ожидание окончания анимации
+      });
     }
 
     // Выдаём ежедневные монеты при запуске
