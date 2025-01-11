@@ -8,16 +8,35 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin-top: 50px;
+      margin-top: 20px;
     }
     #game-status, #result, #daily-coins {
-      margin: 20px;
+      margin: 10px;
       font-size: 18px;
+    }
+    #rocket-container {
+      position: relative;
+      width: 200px;
+      height: 400px;
+      border: 2px solid #ccc;
+      margin: 20px auto;
+      background: linear-gradient(to bottom, #87ceeb, #f0f8ff); /* Небо */
+      overflow: hidden;
+    }
+    #rocket {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 80px;
+      background: url('https://cdn-icons-png.flaticon.com/512/3798/3798202.png') no-repeat center;
+      background-size: contain;
     }
     input, button {
       font-size: 16px;
       padding: 10px;
-      margin: 10px;
+      margin: 5px;
     }
     button {
       background-color: #0088cc;
@@ -43,6 +62,11 @@
   <button onclick="placeBet()">Сделать ставку</button>
   <div id="result"></div>
 
+  <!-- Контейнер для ракеты -->
+  <div id="rocket-container">
+    <div id="rocket"></div>
+  </div>
+
   <script>
     let coins = 0; // Текущие монеты игрока
     let dailyCoins = 0; // Ежедневные монеты
@@ -63,9 +87,23 @@
       document.getElementById("game-status").textContent = `Ваши монеты: ${coins}`;
     }
 
-    // Функция для полёта ракеты
-    function launchRocket() {
-      rocketLevel = Math.floor(Math.random() * 100) + 1; // Ракета летит до случайного уровня (1-100)
+    // Функция для запуска ракеты с анимацией
+    function animateRocket(level) {
+      const rocket = document.getElementById("rocket");
+      const containerHeight = document.getElementById("rocket-container").offsetHeight;
+      const maxLevel = 100;
+
+      const targetPosition = (level / maxLevel) * containerHeight;
+
+      let currentPosition = 0;
+      const interval = setInterval(() => {
+        if (currentPosition >= targetPosition) {
+          clearInterval(interval);
+          return;
+        }
+        currentPosition += 5; // Скорость полёта ракеты
+        rocket.style.bottom = `${currentPosition}px`;
+      }, 50);
     }
 
     // Функция для размещения ставки
@@ -93,18 +131,23 @@
       // Списываем монеты за ставку
       coins -= betCoins;
 
-      // Запускаем ракету
-      launchRocket();
+      // Генерируем уровень полёта ракеты
+      rocketLevel = Math.floor(Math.random() * 100) + 1;
+
+      // Запускаем анимацию ракеты
+      animateRocket(rocketLevel);
 
       // Проверяем результат
-      if (rocketLevel >= betLevel) {
-        const tokensWon = betCoins * betLevel; // Выигрыш в токенах
-        alert(`Ракета долетела до уровня ${rocketLevel}. Вы выиграли ${tokensWon} токенов!`);
-      } else {
-        alert(`Ракета долетела до уровня ${rocketLevel}. Вы проиграли.`);
-      }
+      setTimeout(() => {
+        if (rocketLevel >= betLevel) {
+          const tokensWon = betCoins * betLevel; // Выигрыш в токенах
+          alert(`Ракета долетела до уровня ${rocketLevel}. Вы выиграли ${tokensWon} токенов!`);
+        } else {
+          alert(`Ракета долетела до уровня ${rocketLevel}. Вы проиграли.`);
+        }
 
-      updateUI();
+        updateUI();
+      }, 5000); // Ожидание окончания анимации
     }
 
     // Выдаём ежедневные монеты при запуске
